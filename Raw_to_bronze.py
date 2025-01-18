@@ -28,4 +28,31 @@ remote_table = (spark.read
   .option("password", password)
   .load()
 )
-display(remote_table)
+display(type(remote_table))
+
+# COMMAND ----------
+
+# Move table into global temp view
+remote_table.createOrReplaceGlobalTempView("remote_table")
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC
+# MAGIC SELECT * FROM remote_table
+# MAGIC limit 10
+
+# COMMAND ----------
+
+spark.sql("SELECT * FROM global_temp.remote_table").show()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC CREATE TABLE orders_raw
+# MAGIC AS SELECT * FROM global_temp.remote_table
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC SELECT * FROM orders_raw
