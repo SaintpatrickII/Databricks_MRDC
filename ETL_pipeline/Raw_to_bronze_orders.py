@@ -81,7 +81,7 @@ spark.sql("SELECT * FROM global_temp.orders_temp_table").show()
 # COMMAND ----------
 
 # read in temp view & assert datatypes
-orders_df = spark.read.table("orders_temp_table")
+orders_df = spark.read.table("orders_raw")
 
 orders_df_schema = orders_df.printSchema()
 print(type(orders_df))
@@ -89,9 +89,26 @@ print(type(orders_df))
 
 # COMMAND ----------
 
+# note -> do not try to convert credit card numbers to int
 print(type(orders_df))
-orders_df = orders_df.withColumn("card_number", orders_df["card_number"].cast(IntegerType()))
+# orders_df.show()
+# orders_df = orders_df.withColumn("card_number", orders_df["card_number"].cast(DoubleType()))
+orders_df = orders_df.withColumn("product_quantity", orders_df["product_quantity"].cast(IntegerType()))
+
 # orders_df = orders_df.withColumn("card_number", len(orders_df["card_number"]) < 20)
 orders_df = orders_df.filter(F.length("card_number") < 20)
 # orders_df = orders_df.printSchema()
 orders_df.show()
+
+# COMMAND ----------
+
+# df = orders_df.withColumn("card_number", F.when(F.col("card_number") > 0, F.col("card_number")).otherwise(F.abs(F.col("card_number"))))
+orders_df.show()
+val_card = orders_df.agg({"card_number": "min"}).collect()[0]
+print(val_card)
+orders_df.createOrReplaceTempView("orders_temp_table_filtered")
+
+# COMMAND ----------
+
+df_s = spark.sql("select * from orders_temp_table_filtered")
+df_s.show()
