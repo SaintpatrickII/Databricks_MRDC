@@ -8,6 +8,11 @@ port = dbutils.secrets.get(scope = "mrdc", key = "port")
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC # Database connection
+
+# COMMAND ----------
+
 driver = "org.postgresql.Driver"
 
 database_host = host
@@ -38,7 +43,7 @@ remote_table.createOrReplaceGlobalTempView("remote_table")
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC
+# MAGIC -- Note as a gloval temp view, without the global_temp. attribute this table won't be recognised
 # MAGIC SELECT * FROM remote_table
 # MAGIC limit 10
 
@@ -48,9 +53,15 @@ spark.sql("SELECT * FROM global_temp.remote_table").show()
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## CTAS - remove PII & Misc Columns
+
+# COMMAND ----------
+
 # MAGIC %sql
-# MAGIC CREATE TABLE orders_raw
-# MAGIC AS SELECT * FROM global_temp.remote_table
+# MAGIC CREATE OR REPLACE TABLE orders_raw
+# MAGIC COMMENT "CONTAINS PII"
+# MAGIC AS SELECT * EXCEPT(rt.level_0,rt.first_name, rt.last_name, rt.`1`) FROM global_temp.remote_table rt
 
 # COMMAND ----------
 
