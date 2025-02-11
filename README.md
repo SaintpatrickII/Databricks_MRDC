@@ -22,4 +22,10 @@ databricks secrets put-secret --json '{
 
 ```
 
+## Raw->Bronze:
+
+- Source postgres table connected
+- Orders Fact table:
+    - Removed PII
+    - order_quantity enforced as int
 
