@@ -28,4 +28,5 @@ databricks secrets put-secret --json '{
 - Orders Fact table:
     - Removed PII
     - order_quantity enforced as int
+    - >> next step here
 
