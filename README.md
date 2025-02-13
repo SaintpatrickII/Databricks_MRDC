@@ -22,7 +22,7 @@ databricks secrets put-secret --json '{
 
 ```
 
-## Raw->Bronze:
+## Raw -> Bronze:
 
 - Source postgres table connected
 - Orders Fact table:
